@@ -2,6 +2,8 @@
 
 #include "OpenDoor.h"
 
+#include "Engine/World.h"
+
 
 // Sets default values for this component's properties
 UOpenDoor::UOpenDoor()
@@ -19,6 +21,12 @@ void UOpenDoor::BeginPlay()
 {
 	Super::BeginPlay();
 
+  ActorThatOpens = GetWorld()->GetFirstPlayerController()->GetPawn();
+	
+}
+
+void UOpenDoor::OpenDoor()
+{
   // Set door starting rotation
   AActor* Owner = GetOwner();
   FString ObjectName = Owner->GetName();
@@ -27,7 +35,6 @@ void UOpenDoor::BeginPlay()
   Owner->SetActorRotation(NewRotation);
 
   UE_LOG(LogTemp, Warning, TEXT("Set %s rotation."), *ObjectName);
-	
 }
 
 
@@ -36,6 +43,9 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
+	// Poll if Actor is in pressure plate
+  if (PressurePlate && PressurePlate->IsOverlappingActor(ActorThatOpens)) {
+    OpenDoor();
+  }
 }
 
