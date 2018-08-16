@@ -21,20 +21,33 @@ void UOpenDoor::BeginPlay()
 {
 	Super::BeginPlay();
 
+  // TODO Get these items and log them to the screen or console
+  Owner = GetOwner();
+  ObjectName = Owner->GetName();
+
+  // TODO Get starting door rotation so we can set it back to original
+  //DoorStartingAngle = GetOwner()->GetActorTransform
+
   ActorThatOpens = GetWorld()->GetFirstPlayerController()->GetPawn();
 	
 }
 
+// Set door starting rotation
 void UOpenDoor::OpenDoor()
 {
-  // Set door starting rotation
-  AActor* Owner = GetOwner();
-  FString ObjectName = Owner->GetName();
-  FRotator NewRotation = FRotator(0.0f, 0.60f, 0.0f);
+  Owner->SetActorRotation(FRotator(0.0f, OpenAngle, 0.0f));
 
-  Owner->SetActorRotation(NewRotation);
+  //UE_LOG(LogTemp, Warning, TEXT("OpenDoor() Set %s rotation."), *ObjectName);
+  UE_LOG(LogTemp, Warning, TEXT("OpenDoor()"));
+}
 
-  UE_LOG(LogTemp, Warning, TEXT("Set %s rotation."), *ObjectName);
+// Set door closing rotation
+void UOpenDoor::CloseDoor()
+{
+  Owner->SetActorRotation(FRotator(0.0f, 90.0f, 0.0f));
+
+  //UE_LOG(LogTemp, Warning, TEXT("Set %s rotation."), *ObjectName);
+  UE_LOG(LogTemp, Warning, TEXT("CloseDoor()"));
 }
 
 
@@ -45,7 +58,18 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 
 	// Poll if Actor is in pressure plate
   if (PressurePlate && PressurePlate->IsOverlappingActor(ActorThatOpens)) {
+    UE_LOG(LogTemp, Warning, TEXT("Actor is on pressure plate, Opening door."));
     OpenDoor();
+    LastDoorOpenTime = GetWorld()->GetTimeSeconds();
   }
+
+  // Check if it's time to close the door
+  UE_LOG(LogTemp, Warning, TEXT("Check if it's time to close the door."));
+  if (GetWorld()->GetTimeSeconds() - LastDoorOpenTime > DoorCloseDelay) {
+    UE_LOG(LogTemp, Warning, TEXT("Closing door."));
+    CloseDoor();
+  }
+
+  
 }
 
