@@ -21,7 +21,6 @@ void UOpenDoor::BeginPlay()
 {
 	Super::BeginPlay();
 
-  // TODO Get these items and log them to the screen or console
   Owner = GetOwner();
   ObjectName = Owner->GetName();
 
@@ -35,19 +34,29 @@ void UOpenDoor::BeginPlay()
 // Set door starting rotation
 void UOpenDoor::OpenDoor()
 {
-  Owner->SetActorRotation(FRotator(0.0f, OpenAngle, 0.0f));
 
-  //UE_LOG(LogTemp, Warning, TEXT("OpenDoor() Set %s rotation."), *ObjectName);
-  UE_LOG(LogTemp, Warning, TEXT("OpenDoor()"));
+    UE_LOG(LogTemp, Warning, TEXT("OpenDoor()"));
+
+    FRotator NewRotation = FRotator(0.0f, OpenAngle, 0.0f);
+
+    Owner->SetActorRotation(NewRotation);
+    UE_LOG(LogTemp, Warning, TEXT("Set %s rotation to %s."), *ObjectName, *NewRotation.ToString());
+    bIsDoorOpen = true;
+
+
 }
 
 // Set door closing rotation
 void UOpenDoor::CloseDoor()
 {
-  Owner->SetActorRotation(FRotator(0.0f, 90.0f, 0.0f));
+    UE_LOG(LogTemp, Warning, TEXT("CloseDoor()"));
 
-  //UE_LOG(LogTemp, Warning, TEXT("Set %s rotation."), *ObjectName);
-  UE_LOG(LogTemp, Warning, TEXT("CloseDoor()"));
+    FRotator NewRotation = FRotator(0.0f, CloseAngle, 0.0f);
+
+    Owner->SetActorRotation(NewRotation);
+    UE_LOG(LogTemp, Warning, TEXT("Set %s rotation to %s."), *ObjectName, *NewRotation.ToString());
+    bIsDoorOpen = false;
+
 }
 
 
@@ -57,16 +66,16 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// Poll if Actor is in pressure plate
-  if (PressurePlate && PressurePlate->IsOverlappingActor(ActorThatOpens)) {
+  if (PressurePlate && !bIsDoorOpen && PressurePlate->IsOverlappingActor(ActorThatOpens)) {
     UE_LOG(LogTemp, Warning, TEXT("Actor is on pressure plate, Opening door."));
     OpenDoor();
     LastDoorOpenTime = GetWorld()->GetTimeSeconds();
   }
 
   // Check if it's time to close the door
-  UE_LOG(LogTemp, Warning, TEXT("Check if it's time to close the door."));
-  if (GetWorld()->GetTimeSeconds() - LastDoorOpenTime > DoorCloseDelay) {
-    UE_LOG(LogTemp, Warning, TEXT("Closing door."));
+ // UE_LOG(LogTemp, Warning, TEXT("Check if it's time to close the door."));
+  if (bIsDoorOpen && GetWorld()->GetTimeSeconds() - LastDoorOpenTime > DoorCloseDelay) {
+    //UE_LOG(LogTemp, Warning, TEXT("Closing door."));
     CloseDoor();
   }
 
