@@ -4,6 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "DrawDebugHelpers.h"
+
+
 #include "Grabber.generated.h"
 
 
@@ -26,6 +29,9 @@ public:
 
 private:
   //AActor* Owner;
+
+  // Distance that the character can reach in front of them
+  float Reach = 100.f;
 		
 	
 };
