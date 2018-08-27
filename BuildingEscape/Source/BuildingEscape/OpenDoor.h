@@ -16,20 +16,16 @@ class BUILDINGESCAPE_API UOpenDoor : public UActorComponent
 
 public:
 	UOpenDoor();
+  void OpenDoor();
+  void CloseDoor();
 
 
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 	
-
-
-public:	
   // Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
-  void OpenDoor();
-  void CloseDoor();
 
 
 private:
@@ -40,17 +36,18 @@ private:
   float CloseAngle = 90.0f;
 
   UPROPERTY(EditAnywhere)
-  ATriggerBox* PressurePlate;
+  ATriggerBox* PressurePlate = nullptr; // set in editor to a trigger box
 
   UPROPERTY(EditAnywhere)
   float DoorCloseDelay = 1.0f;
 
   float LastDoorOpenTime;
-  AActor* ActorThatOpens;
-  AActor* Owner;
 
+  AActor* Owner = nullptr;
   FString ObjectName;
 
   bool bIsDoorOpen = true;
+
+  float GetTotalMassOfActorsOnPlate();
 	
 };

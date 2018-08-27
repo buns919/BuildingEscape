@@ -64,8 +64,6 @@ void UGrabber::Grab() {
 }
 
 void UGrabber::Release() {
-  UE_LOG(LogTemp, Warning, TEXT("Grab released"));
-
   PhysicsHandle->ReleaseComponent();
 }
 
